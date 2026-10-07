@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07111f" />
+  <meta name="description" content="Tutorial interactivo para comprender matemáticas y conceptos de Transformers desde cero." />
+  <title>La aventura del Transformer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+
+  <div id="app" class="app">
+    <header class="topbar">
+      <a class="brand" href="#/" aria-label="Inicio">
+        <div class="brand-mark" aria-hidden="true">
+          <span class="brand-orbit"></span>
+          <span class="brand-core">T</span>
+        </div>
+        <div class="brand-copy">
+          <strong>La aventura del Transformer</strong>
+          <span>Entenderlo de verdad, número por número</span>
+        </div>
+      </a>
+
+      <div class="top-actions">
+        <button id="modeBtn" class="top-btn" type="button" title="Cambiar modo">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H4zM9 20h6M12 16v4"/></svg>
+          <span id="modeLabel">Modo exposición</span>
+        </button>
+        <button id="speakBtn" class="top-btn" type="button" title="Escuchar explicación">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h4l5 4V6L9 10H5zM17 9c1.4 1.2 1.4 4.8 0 6M19 6c3 3 3 9 0 12"/></svg>
+          <span>Escuchar</span>
+        </button>
+        <button id="fullscreenBtn" class="top-btn" type="button" title="Pantalla completa (F)">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4"/></svg>
+          <span>Pantalla completa</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="legend-strip" aria-label="Código visual">
+      <div class="legend-heading">
+        <span class="mini-kicker">Regla de memoria</span>
+        <strong>El color siempre significa lo mismo</strong>
+      </div>
+      <div class="legend-items">
+        <span><i class="legend-dot q"></i><b>Q</b> busca</span>
+        <span><i class="legend-dot k"></i><b>K</b> se deja encontrar</span>
+        <span><i class="legend-dot v"></i><b>V</b> lleva información</span>
+        <span><i class="legend-dot attn"></i><b>Atención</b> reparte importancia</span>
+        <span><i class="legend-dot mask"></i><b>Máscara</b> prohíbe mirar</span>
+      </div>
+    </section>
+
+    <div class="main-grid">
+      <aside class="side-map">
+        <div class="side-map-head">
+          <div>
+            <span class="mini-kicker">Tu ruta</span>
+            <h2>Mapa de misiones</h2>
+          </div>
+          <div id="starCounter" class="star-counter" title="Checkpoints correctos">
+            <span aria-hidden="true">★</span><b>0</b>
+          </div>
+        </div>
+        <div id="missionList" class="mission-list"></div>
+
+        <div class="side-tip">
+          <div class="side-tip-icon">?</div>
+          <div>
+            <strong>¿Te perdiste?</strong>
+            <p>Pulsa “Explícamelo más fácil” y la misma idea se reconstruye sin símbolos.</p>
+          </div>
+        </div>
+      </aside>
+
+      <main class="lesson-column">
+        <div class="progress-wrap">
+          <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
+          <span id="progressText">1 / 16</span>
+        </div>
+
+        <article id="lessonCard" class="lesson-card">
+          <div class="lesson-head">
+            <div>
+              <span id="chapterLabel" class="chapter-label"></span>
+              <h1 id="lessonTitle"></h1>
+            </div>
+            <div id="shapeBadge" class="shape-badge"></div>
+          </div>
+
+          <div class="teacher-row">
+            <div class="guide-wrap" aria-label="Lumi, guía del tutorial">
+              <div class="guide">
+                <div class="guide-hair"></div>
+                <div class="guide-head">
+                  <span class="guide-eye left"></span>
+                  <span class="guide-eye right"></span>
+                  <span class="guide-mouth"></span>
+                </div>
+                <div class="guide-body">
+                  <span class="guide-badge">T</span>
+                </div>
+                <div class="guide-arm"></div>
+              </div>
+              <span class="guide-name">Lumi</span>
+            </div>
+
+            <div class="teacher-bubble">
+              <span class="bubble-label">Primero: entiéndelo como humano</span>
+              <p id="humanText"></p>
+              <div class="mental-image">
+                <span>Imagen mental</span>
+                <p id="analogyText"></p>
+              </div>
+              <div class="teacher-actions">
+                <button id="simplifyBtn" class="pill-btn" type="button">Explícamelo más fácil</button>
+                <button id="whyBtn" class="pill-btn" type="button">¿Por qué existe?</button>
+              </div>
+            </div>
+          </div>
+
+          <section id="scene" class="scene" aria-label="Visualización interactiva" aria-live="polite"></section>
+
+          <div class="anchor">
+            <div class="anchor-symbol" aria-hidden="true">⌁</div>
+            <div>
+              <span>Frase para recordar mañana</span>
+              <strong id="anchorText"></strong>
+            </div>
+          </div>
+        </article>
+
+        <section id="studyPanel" class="study-panel">
+          <div class="panel-grid">
+            <section class="math-panel">
+              <div class="panel-head">
+                <div>
+                  <span class="mini-kicker">Escalera matemática</span>
+                  <h2>No saltamos ninguna operación</h2>
+                </div>
+                <div id="microCounter" class="shape-badge">1 / 1</div>
+              </div>
+              <div id="microSteps" class="micro-steps"></div>
+              <div class="button-row">
+                <button id="microPrev" class="soft-btn" type="button">← Escalón anterior</button>
+                <button id="microNext" class="primary-btn" type="button">Siguiente escalón →</button>
+                <button id="microAll" class="soft-btn" type="button">Ver toda la cuenta</button>
+                <button id="replayBtn" class="soft-btn" type="button">↻ Repetir visual</button>
+              </div>
+            </section>
+
+            <section class="concept-panel">
+              <div class="concept-card">
+                <span class="concept-kicker">¿Para qué existe?</span>
+                <p id="whyText"></p>
+              </div>
+              <div class="concept-card">
+                <span class="concept-kicker">¿Qué se rompe si lo quito?</span>
+                <p id="withoutText"></p>
+              </div>
+              <div class="concept-card danger">
+                <span class="concept-kicker">Trampa típica de examen</span>
+                <p id="mistakeText"></p>
+              </div>
+            </section>
+          </div>
+
+          <div class="panel-grid bottom-grid">
+            <section class="state-panel">
+              <span class="mini-kicker">Sigue al personaje</span>
+              <h2>¿Qué es ahora “masacotudo”?</h2>
+              <div id="tokenState" class="token-state"></div>
+              <div id="journeyBar" class="journey-bar"></div>
+            </section>
+
+            <section class="quiz-panel">
+              <span class="mini-kicker">Checkpoint</span>
+              <h2>Antes de seguir, compruébalo</h2>
+              <p id="quizQuestion" class="quiz-question"></p>
+              <div id="quizOptions" class="quiz-options"></div>
+              <div id="quizFeedback" class="quiz-feedback" aria-live="polite"></div>
+            </section>
+          </div>
+        </section>
+
+        <footer class="deck-controls">
+          <div class="deck-nav">
+            <button id="prevBtn" class="soft-btn" type="button">← Anterior</button>
+            <button id="playBtn" class="primary-btn" type="button">▶ Reproducir clase</button>
+            <button id="nextBtn" class="soft-btn" type="button">Siguiente →</button>
+          </div>
+
+          <div class="shortcut-row">
+            <span><kbd>←</kbd><kbd>→</kbd> avanzar</span>
+            <span><kbd>F</kbd> pantalla completa</span>
+            <span><kbd>R</kbd> repetir</span>
+            <span><kbd>Espacio</kbd> play / pausa</span>
+          </div>
+
+          <label class="speed">
+            <span>Velocidad</span>
+            <select id="speedSelect">
+              <option value=".65">0.65×</option>
+              <option value="1" selected>1×</option>
+              <option value="1.35">1.35×</option>
+              <option value="1.8">1.8×</option>
+            </select>
+          </label>
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <div id="focusModal" class="focus-modal" aria-hidden="true">
+    <div class="focus-card">
+      <button id="focusClose" class="focus-close" type="button" aria-label="Cerrar">×</button>
+      <span id="focusKicker" class="mini-kicker"></span>
+      <h2 id="focusTitle"></h2>
+      <p id="focusText"></p>
+      <div id="focusExtra" class="focus-extra"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
