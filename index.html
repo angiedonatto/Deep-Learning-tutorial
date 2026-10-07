@@ -1,230 +1,322 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#07111f" />
-  <meta name="description" content="Tutorial interactivo para comprender matemáticas y conceptos de Transformers desde cero." />
-  <title>La aventura del Transformer</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#fff7eb">
+  <meta name="description" content="Tutorial visual e interactivo de atención y Transformers, construido alrededor de los ejercicios reales de las guías 13–15.">
+  <title>Transformer Adventure — de cero al resultado</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="noise" aria-hidden="true"></div>
-
-  <div id="app" class="app">
+  <div class="app-shell">
     <header class="topbar">
-      <a class="brand" href="#/" aria-label="Inicio">
-        <div class="brand-mark" aria-hidden="true">
-          <span class="brand-orbit"></span>
-          <span class="brand-core">T</span>
+      <a href="#inicio" class="brand" aria-label="Ir al inicio">
+        <div class="brand-orbit" aria-hidden="true">
+          <span class="orbit-dot"></span>
+          <strong>T</strong>
         </div>
-        <div class="brand-copy">
-          <strong>La aventura del Transformer</strong>
-          <span>Entenderlo de verdad, número por número</span>
+        <div>
+          <span class="eyebrow">Deep Learning · Guías 13–15</span>
+          <strong class="brand-title">Transformer Adventure</strong>
         </div>
       </a>
 
       <div class="top-actions">
-        <button id="modeBtn" class="top-btn" type="button" title="Cambiar modo">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v11H4zM9 20h6M12 16v4"/></svg>
-          <span id="modeLabel">Modo exposición</span>
-        </button>
-        <button id="speakBtn" class="top-btn" type="button" title="Escuchar explicación">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 10v4h4l5 4V6L9 10H5zM17 9c1.4 1.2 1.4 4.8 0 6M19 6c3 3 3 9 0 12"/></svg>
-          <span>Escuchar</span>
-        </button>
-        <button id="fullscreenBtn" class="top-btn" type="button" title="Pantalla completa (F)">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4M16 4h4v4M8 20H4v-4M16 20h4v-4"/></svg>
-          <span>Pantalla completa</span>
-        </button>
+        <button id="presentBtn" class="top-action" type="button">Presentar</button>
+        <button id="examBtn" class="top-action" type="button">Modo examen</button>
+        <button id="fullscreenBtn" class="top-action icon-action" type="button" aria-label="Pantalla completa">⛶</button>
       </div>
     </header>
 
-    <section class="legend-strip" aria-label="Código visual">
-      <div class="legend-heading">
-        <span class="mini-kicker">Regla de memoria</span>
-        <strong>El color siempre significa lo mismo</strong>
-      </div>
-      <div class="legend-items">
-        <span><i class="legend-dot q"></i><b>Q</b> busca</span>
-        <span><i class="legend-dot k"></i><b>K</b> se deja encontrar</span>
-        <span><i class="legend-dot v"></i><b>V</b> lleva información</span>
-        <span><i class="legend-dot attn"></i><b>Atención</b> reparte importancia</span>
-        <span><i class="legend-dot mask"></i><b>Máscara</b> prohíbe mirar</span>
-      </div>
-    </section>
+    <nav class="chapter-rail" aria-label="Capítulos">
+      <button class="chapter-pill active" data-jump="inicio">Inicio</button>
+      <button class="chapter-pill" data-jump="ejercicio">Ejercicio real</button>
+      <button class="chapter-pill" data-jump="masking">Masking</button>
+      <button class="chapter-pill" data-jump="posicion">Posición</button>
+      <button class="chapter-pill" data-jump="gpt2">124M GPT‑2</button>
+      <button class="chapter-pill" data-jump="mapa">Mapa final</button>
+    </nav>
 
-    <div class="main-grid">
-      <aside class="side-map">
-        <div class="side-map-head">
-          <div>
-            <span class="mini-kicker">Tu ruta</span>
-            <h2>Mapa de misiones</h2>
+    <main>
+      <section id="inicio" class="hero section">
+        <div class="hero-copy">
+          <span class="eyebrow coral">No memorices una fórmula. Sigue una historia.</span>
+          <h1>La vida completa de <span class="highlight-word">masacotudo</span> dentro de un Transformer.</h1>
+          <p class="hero-lead">
+            Esta versión parte de los ejercicios reales de clase y los reconstruye número por número:
+            desde las matrices Q, K y V que entrega la guía, hasta la salida final del bloque
+            <strong>y₃ = (0.2393, −1.1821, 1.4963, −0.5536)</strong>.
+          </p>
+
+          <div class="hero-cta-row">
+            <button class="primary-cta" data-jump="ejercicio" type="button">Empezar el ejercicio real →</button>
+            <button class="secondary-cta" id="tourBtn" type="button">▶ Recorrerlo conmigo</button>
           </div>
-          <div id="starCounter" class="star-counter" title="Checkpoints correctos">
-            <span aria-hidden="true">★</span><b>0</b>
+
+          <div class="promise-grid">
+            <article>
+              <span class="promise-icon">①</span>
+              <strong>Primero intuición</strong>
+              <p>Qué significa cada cosa antes de tocar una fórmula.</p>
+            </article>
+            <article>
+              <span class="promise-icon">②</span>
+              <strong>Luego la cuenta</strong>
+              <p>Cada multiplicación, suma, forma y resultado intermedio.</p>
+            </article>
+            <article>
+              <span class="promise-icon">③</span>
+              <strong>Después examen</strong>
+              <p>Te oculto pasos y compruebas si ya puedes reconstruirlos.</p>
+            </article>
           </div>
         </div>
-        <div id="missionList" class="mission-list"></div>
 
-        <div class="side-tip">
-          <div class="side-tip-icon">?</div>
-          <div>
-            <strong>¿Te perdiste?</strong>
-            <p>Pulsa “Explícamelo más fácil” y la misma idea se reconstruye sin símbolos.</p>
+        <div class="hero-visual" aria-label="Mapa visual de la frase tamal estaba masacotudo">
+          <div class="sunburst"></div>
+          <div class="phrase-card">
+            <span class="phrase-label">Nuestra frase ancla</span>
+            <div class="phrase-row">
+              <div class="word-chip tamal">tamal<span>1</span></div>
+              <div class="word-chip estaba">estaba<span>2</span></div>
+              <div class="word-chip masacotudo">masacotudo<span>3</span></div>
+            </div>
+            <div class="attention-arcs">
+              <svg viewBox="0 0 520 190" role="img" aria-label="masacotudo presta mayor atención a tamal">
+                <defs>
+                  <marker id="arrowGold" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+                    <path d="M0 0L10 5L0 10Z" fill="#e8a427"></path>
+                  </marker>
+                </defs>
+                <path class="arc arc-major" d="M430 145 C365 18 150 18 85 145" marker-end="url(#arrowGold)"></path>
+                <path class="arc arc-mid" d="M430 145 C400 72 310 72 260 145" marker-end="url(#arrowGold)"></path>
+                <text x="228" y="38">66.52%</text>
+                <text x="344" y="92">24.47%</text>
+              </svg>
+            </div>
+            <div class="hero-result">
+              <span>Después de atención</span>
+              <strong>z₃ = (1.4205, 0.5795)</strong>
+            </div>
           </div>
-        </div>
-      </aside>
 
-      <main class="lesson-column">
-        <div class="progress-wrap">
-          <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div>
-          <span id="progressText">1 / 16</span>
-        </div>
-
-        <article id="lessonCard" class="lesson-card">
-          <div class="lesson-head">
+          <div class="mascot-card">
+            <div class="lumi" aria-hidden="true">
+              <div class="lumi-head"><i></i><i></i><b></b></div>
+              <div class="lumi-body">T</div>
+            </div>
             <div>
-              <span id="chapterLabel" class="chapter-label"></span>
-              <h1 id="lessonTitle"></h1>
+              <strong>Lumi</strong>
+              <p>“Yo te voy diciendo qué mirar y por qué, pero la cuenta la vas a poder rehacer tú.”</p>
             </div>
-            <div id="shapeBadge" class="shape-badge"></div>
           </div>
+        </div>
+      </section>
 
-          <div class="teacher-row">
-            <div class="guide-wrap" aria-label="Lumi, guía del tutorial">
-              <div class="guide">
-                <div class="guide-hair"></div>
-                <div class="guide-head">
-                  <span class="guide-eye left"></span>
-                  <span class="guide-eye right"></span>
-                  <span class="guide-mouth"></span>
+      <section class="color-key-wrap">
+        <div class="color-key">
+          <span><i class="c-q"></i><b>Q</b> = lo que busca</span>
+          <span><i class="c-k"></i><b>K</b> = cómo me encuentran</span>
+          <span><i class="c-v"></i><b>V</b> = lo que aporto</span>
+          <span><i class="c-a"></i><b>Atención</b> = cuánto tomo</span>
+          <span><i class="c-m"></i><b>Máscara</b> = lo prohibido</span>
+        </div>
+      </section>
+
+      <section id="ejercicio" class="section exercise-section">
+        <div class="section-heading">
+          <span class="eyebrow coral">Ejercicio real · Guía 13 + Guía 14</span>
+          <h2>De las matrices dadas al resultado final del bloque.</h2>
+          <p>
+            Este es el puente real entre las dos guías. La Guía 13 entrega Q, K y V ya proyectadas y
+            obtiene <strong>z₃</strong>. La Guía 14 toma ese z₃, lo lleva de vuelta a dmodel con Wᴼ y hace
+            residual, LayerNorm, FFN y la segunda normalización.
+          </p>
+        </div>
+
+        <div class="exercise-layout">
+          <aside class="step-map">
+            <div class="step-map-head">
+              <span class="eyebrow">Ruta del cálculo</span>
+              <strong id="stepProgressLabel">Paso 0 de 10</strong>
+            </div>
+            <div id="stepList" class="step-list"></div>
+          </aside>
+
+          <article class="workbench">
+            <div class="workbench-top">
+              <div>
+                <span id="stageKicker" class="eyebrow">Paso 0</span>
+                <h3 id="stageTitle"></h3>
+              </div>
+              <div class="stage-actions">
+                <button id="easyBtn" class="mini-btn" type="button">Explícamelo sin símbolos</button>
+                <button id="whyBtn" class="mini-btn" type="button">¿Por qué?</button>
+              </div>
+            </div>
+
+            <div id="storyStrip" class="story-strip"></div>
+            <div id="visualStage" class="visual-stage"></div>
+
+            <div class="workbench-bottom">
+              <div class="narration-card">
+                <span class="eyebrow">Qué está pasando</span>
+                <p id="stageNarration"></p>
+                <div id="stageAnchor" class="anchor-line"></div>
+              </div>
+
+              <div class="math-card">
+                <div class="math-card-head">
+                  <span class="eyebrow">Cuenta completa</span>
+                  <button id="toggleMathBtn" class="mini-btn" type="button">Mostrar todos los renglones</button>
                 </div>
-                <div class="guide-body">
-                  <span class="guide-badge">T</span>
-                </div>
-                <div class="guide-arm"></div>
-              </div>
-              <span class="guide-name">Lumi</span>
-            </div>
-
-            <div class="teacher-bubble">
-              <span class="bubble-label">Primero: entiéndelo como humano</span>
-              <p id="humanText"></p>
-              <div class="mental-image">
-                <span>Imagen mental</span>
-                <p id="analogyText"></p>
-              </div>
-              <div class="teacher-actions">
-                <button id="simplifyBtn" class="pill-btn" type="button">Explícamelo más fácil</button>
-                <button id="whyBtn" class="pill-btn" type="button">¿Por qué existe?</button>
+                <div id="mathSteps" class="math-steps"></div>
               </div>
             </div>
+
+            <div class="step-controls">
+              <button id="prevStep" type="button">← Paso anterior</button>
+              <div class="step-dots" id="stepDots"></div>
+              <button id="nextStep" class="next" type="button">Siguiente paso →</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="result-ribbon">
+          <div>
+            <span class="eyebrow">Resultado de punta a punta</span>
+            <p>Entrada al bloque</p>
+            <strong>x₃ = (1, 0, 2, 1)</strong>
           </div>
+          <span class="ribbon-arrow">→</span>
+          <div>
+            <p>Atención</p>
+            <strong>z₃ = (1.4205, 0.5795)</strong>
+          </div>
+          <span class="ribbon-arrow">→</span>
+          <div>
+            <p>Salida del bloque</p>
+            <strong>y₃ = (0.2393, −1.1821, 1.4963, −0.5536)</strong>
+          </div>
+        </div>
+      </section>
 
-          <section id="scene" class="scene" aria-label="Visualización interactiva" aria-live="polite"></section>
+      <section id="masking" class="section topic-section masking-section">
+        <div class="section-heading">
+          <span class="eyebrow red">Masking · la parte que más se confunde</span>
+          <h2>La matriz completa está en memoria, pero el futuro se vuelve matemáticamente invisible.</h2>
+          <p>Vamos a ver exactamente qué cambia en cada fila antes y después de sumar la máscara causal.</p>
+        </div>
 
-          <div class="anchor">
-            <div class="anchor-symbol" aria-hidden="true">⌁</div>
-            <div>
-              <span>Frase para recordar mañana</span>
-              <strong id="anchorText"></strong>
+        <div class="mask-lab">
+          <div class="mask-story">
+            <div class="exam-sheet">
+              <span class="sheet-title">Entrenamiento del decoder</span>
+              <div class="sheet-line">tamal</div>
+              <div class="sheet-line">estaba</div>
+              <div class="sheet-line covered">masacotudo <span>FUTURO TAPADO</span></div>
+            </div>
+            <div class="mask-copy">
+              <span class="eyebrow red">Regla causal</span>
+              <h3>Si estoy en la fila i, solo puedo mirar columnas j ≤ i.</h3>
+              <p>
+                A las posiciones futuras no les damos “poquita atención”. Les sumamos
+                <strong>−∞ antes del softmax</strong>, y por eso terminan con peso exactamente 0.
+              </p>
+              <button id="maskToggle" class="primary-cta red-cta" type="button">Aplicar máscara causal</button>
             </div>
           </div>
-        </article>
 
-        <section id="studyPanel" class="study-panel">
-          <div class="panel-grid">
-            <section class="math-panel">
-              <div class="panel-head">
-                <div>
-                  <span class="mini-kicker">Escalera matemática</span>
-                  <h2>No saltamos ninguna operación</h2>
-                </div>
-                <div id="microCounter" class="shape-badge">1 / 1</div>
-              </div>
-              <div id="microSteps" class="micro-steps"></div>
-              <div class="button-row">
-                <button id="microPrev" class="soft-btn" type="button">← Escalón anterior</button>
-                <button id="microNext" class="primary-btn" type="button">Siguiente escalón →</button>
-                <button id="microAll" class="soft-btn" type="button">Ver toda la cuenta</button>
-                <button id="replayBtn" class="soft-btn" type="button">↻ Repetir visual</button>
-              </div>
-            </section>
+          <div id="maskMatrixArea" class="mask-matrix-area"></div>
+        </div>
+      </section>
 
-            <section class="concept-panel">
-              <div class="concept-card">
-                <span class="concept-kicker">¿Para qué existe?</span>
-                <p id="whyText"></p>
-              </div>
-              <div class="concept-card">
-                <span class="concept-kicker">¿Qué se rompe si lo quito?</span>
-                <p id="withoutText"></p>
-              </div>
-              <div class="concept-card danger">
-                <span class="concept-kicker">Trampa típica de examen</span>
-                <p id="mistakeText"></p>
-              </div>
-            </section>
+      <section id="posicion" class="section topic-section position-section">
+        <div class="section-heading">
+          <span class="eyebrow orange">Codificación posicional · Guía 14</span>
+          <h2>La misma palabra cambia porque también carga dónde está.</h2>
+          <p>Para d=4, la guía reduce la fórmula a dos parejas seno–coseno que sí podemos calcular a mano.</p>
+        </div>
+
+        <div class="position-lab">
+          <div class="clock-card">
+            <div class="clock-face">
+              <span class="hand fast"></span>
+              <span class="hand slow"></span>
+              <span class="clock-center"></span>
+            </div>
+            <p>Una pareja gira rápido. La otra gira muy lento. Juntas crean una “firma” de posición.</p>
           </div>
-
-          <div class="panel-grid bottom-grid">
-            <section class="state-panel">
-              <span class="mini-kicker">Sigue al personaje</span>
-              <h2>¿Qué es ahora “masacotudo”?</h2>
-              <div id="tokenState" class="token-state"></div>
-              <div id="journeyBar" class="journey-bar"></div>
-            </section>
-
-            <section class="quiz-panel">
-              <span class="mini-kicker">Checkpoint</span>
-              <h2>Antes de seguir, compruébalo</h2>
-              <p id="quizQuestion" class="quiz-question"></p>
-              <div id="quizOptions" class="quiz-options"></div>
-              <div id="quizFeedback" class="quiz-feedback" aria-live="polite"></div>
-            </section>
+          <div class="position-controls">
+            <label for="positionSlider">Posición p = <strong id="positionValue">2</strong></label>
+            <input id="positionSlider" type="range" min="0" max="8" value="2" step="1">
+            <div id="positionMath" class="position-math"></div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        <footer class="deck-controls">
-          <div class="deck-nav">
-            <button id="prevBtn" class="soft-btn" type="button">← Anterior</button>
-            <button id="playBtn" class="primary-btn" type="button">▶ Reproducir clase</button>
-            <button id="nextBtn" class="soft-btn" type="button">Siguiente →</button>
+      <section id="gpt2" class="section topic-section gpt-section">
+        <div class="section-heading">
+          <span class="eyebrow purple">Cuenta obligatoria del video</span>
+          <h2>¿De dónde salen exactamente los 124,439,808 parámetros de GPT‑2 pequeño?</h2>
+          <p>Nada de “aproximadamente 124M” sin saber de dónde. Esta cuenta queda desarmada pieza por pieza.</p>
+        </div>
+
+        <div class="param-lab">
+          <div class="param-stack" id="paramStack"></div>
+          <div class="param-total">
+            <span class="eyebrow purple">Total oficial</span>
+            <strong id="paramTotal">124,439,808</strong>
+            <p>12 bloques + embeddings + posiciones + normalización final.</p>
           </div>
+        </div>
+      </section>
 
-          <div class="shortcut-row">
-            <span><kbd>←</kbd><kbd>→</kbd> avanzar</span>
-            <span><kbd>F</kbd> pantalla completa</span>
-            <span><kbd>R</kbd> repetir</span>
-            <span><kbd>Espacio</kbd> play / pausa</span>
-          </div>
+      <section id="mapa" class="section final-map-section">
+        <div class="section-heading center">
+          <span class="eyebrow coral">Mapa final para explicar de memoria</span>
+          <h2>Si puedes contar esta historia sin mirar, ya entiendes el bloque.</h2>
+        </div>
 
-          <label class="speed">
-            <span>Velocidad</span>
-            <select id="speedSelect">
-              <option value=".65">0.65×</option>
-              <option value="1" selected>1×</option>
-              <option value="1.35">1.35×</option>
-              <option value="1.8">1.8×</option>
-            </select>
-          </label>
-        </footer>
-      </main>
+        <div id="pipelineMap" class="pipeline-map"></div>
+
+        <div class="oral-card">
+          <span class="eyebrow">Guion oral de 30 segundos</span>
+          <p>
+            “Cada token se representa con números y posición. De ahí salen Query, Key y Value.
+            Q compara con K para producir scores; se dividen por √dₖ, se aplica softmax por filas y
+            esos pesos mezclan V. Las cabezas se concatenan y Wᴼ devuelve dmodel. Se suma el residual,
+            se normaliza, pasa por una FFN por posición, se vuelve a sumar y normalizar. En un decoder,
+            además, una máscara causal pone −∞ en el futuro antes del softmax.”
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <button id="modalClose" class="modal-close" type="button" aria-label="Cerrar">×</button>
+      <span id="modalKicker" class="eyebrow"></span>
+      <h2 id="modalTitle"></h2>
+      <p id="modalText"></p>
+      <div id="modalExtra" class="modal-extra"></div>
     </div>
   </div>
 
-  <div id="focusModal" class="focus-modal" aria-hidden="true">
-    <div class="focus-card">
-      <button id="focusClose" class="focus-close" type="button" aria-label="Cerrar">×</button>
-      <span id="focusKicker" class="mini-kicker"></span>
-      <h2 id="focusTitle"></h2>
-      <p id="focusText"></p>
-      <div id="focusExtra" class="focus-extra"></div>
+  <div id="presentOverlay" class="present-overlay" aria-hidden="true">
+    <div class="present-frame">
+      <button id="presentClose" class="present-close" type="button">Salir</button>
+      <div class="present-progress"><div id="presentProgressFill"></div></div>
+      <div id="presentContent" class="present-content"></div>
+      <div class="present-controls">
+        <button id="presentPrev" type="button">←</button>
+        <span id="presentCount"></span>
+        <button id="presentNext" type="button">→</button>
+      </div>
     </div>
   </div>
-
-  <div id="toast" class="toast" role="status"></div>
 
   <script src="app.js"></script>
 </body>
