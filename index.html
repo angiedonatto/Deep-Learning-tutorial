@@ -39,6 +39,14 @@
     </nav>
 
     <main>
+<section id="cinema" class="cinema" aria-label="Clase animada">
+<header class="film-header">DEEP LEARNING · UNA CLASE VISUAL <span id="filmChapter"></span></header>
+<div id="filmScene" class="film-scene"></div>
+<p id="filmCaption" class="film-caption" aria-live="polite"></p>
+<div class="film-controls"><button id="filmPlay">▶ Empezar la clase</button><button id="filmBack" aria-label="Anterior">↶</button><button id="filmNext" aria-label="Siguiente">↷</button><input id="filmSeek" aria-label="Momento de la clase" type="range" min="0" value="0"><span id="filmTime"></span><select id="filmSpeed" aria-label="Velocidad"><option value="0.8">0.8×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option></select><button id="filmVoice" aria-pressed="true">Voz activada</button><button id="filmFull" aria-label="Pantalla completa">⛶</button></div>
+<details class="film-chapters"><summary>Ir a un momento</summary><div id="filmChapters"></div></details>
+<p class="film-note">Espacio: pausa · Flechas: anterior/siguiente. Voz en español del navegador. Puedes detenerte y volver a cualquier cuenta.</p>
+</section><details class="study-notes"><summary>Apuntes y laboratorios para repasar</summary>
       <section id="inicio" class="hero section">
         <div class="hero-copy">
           <span class="eyebrow coral">No memorices una fórmula. Sigue una historia.</span>
@@ -292,7 +300,7 @@
           </p>
         </div>
       </section>
-    </main>
+    </details></main>
   </div>
 
   <div id="modal" class="modal" aria-hidden="true">

@@ -228,4 +228,69 @@ document.addEventListener('keydown',function(e){
   }
   if(e.key==='Escape')closeModal();
 });
+// A continuous storyboard: every spoken beat has its own visual and calculation.
+var film=[],fi=0,playing=false,voice=true,filmTimer=null,filmGeneration=0;
+function beat(chapter,title,text,visual,equation){film.push({chapter:chapter,title:title,text:text,visual:visual,equation:equation||''})}
+function wordScene(mode){
+ var words=['tamal','estaba','masacotudo'],colors=['#62b5ff','#b39aff','#61d7aa'];
+ return '<svg viewBox="0 0 1000 300" role="img" aria-label="Tres palabras intercambian información">'+
+ (mode?'<path class="film-stream" d="M815 110 Q500 -20 175 110" fill="none" stroke="#ffd36b" stroke-width="8"/><path class="film-stream" d="M815 110 Q650 30 495 110" fill="none" stroke="#ffd36b" stroke-width="4"/>':'')+
+ words.map(function(w,i){return '<g transform="translate('+(55+i*320)+' 110)"><rect width="250" height="95" rx="22" fill="'+colors[i]+'"/><text x="125" y="56" text-anchor="middle" font-size="27" fill="#142137">'+w+'</text><text x="125" y="125" text-anchor="middle" font-size="17" fill="#c4cde0">'+(mode?['66.52%','24.47%','9%'][i]:'posición '+(i+1))+'</text></g>'}).join('')+'</svg>';
+}
+beat('Antes de calcular','Una palabra necesita contexto','Mira la palabra masacotudo. Sola nos dice poco. Al leer tamal estaba masacotudo, sabemos qué estamos describiendo. Vamos a ver cómo una red incorpora esa información, usando números.',function(){return wordScene(false)});
+beat('Antes de calcular','El objetivo: cambiar un vector','La atención no cambia la palabra escrita. Cambia su representación numérica. Una posición consulta a las otras y reúne parte de su información. Estas líneas representan esa comunicación.',function(){return wordScene(true)});
+beat('Antes de calcular','Del texto a una fila de números','Un embedding convierte un token en un vector aprendido. En este ejemplo usamos cuatro coordenadas. Los números no son cuatro definiciones humanas: son valores con los que podemos calcular.',function(){return vectorBox('representación numérica','x₃ = (1, 0, 2, 1)')});
+beat('Antes de calcular','También necesitamos el orden','En el esquema sinusoidal se suma una señal de posición. Para la posición dos, contando desde cero, calculamos senos y cosenos. Esta cuenta de posición es un ejemplo separado: no la usaremos para inventar las proyecciones que faltan en el ejercicio.',function(){return vectorBox('posición 2','PE(2) ≈ (.9093, −.4161, .0200, .9998)')},'x + PE(2) ≈ (1.9093, −.4161, 2.0200, 1.9998)');
+beat('Antes de calcular','Una palabra, tres trabajos','Query expresa lo que busco. Key es la ficha con la que me comparan. Value es el contenido que entrego. Las tres versiones salen de proyecciones aprendidas. En nuestro ejercicio ya nos dan esas proyecciones calculadas.',function(){return '<div class="vector-flow">'+vectorBox('Q · busca','x WQ','background:#d9efff')+vectorBox('K · se compara','x WK','background:#e9e0ff')+vectorBox('V · transporta','x WV','background:#ddf7ea')+'</div>'});
+stages.forEach(function(s,si){
+ beat(s.short,s.title,s.narration,s.visual);
+ s.math.forEach(function(line,mi){
+  var text=si===1?['Tomemos la Query de masacotudo: cuatro unos. Con la Key de tamal multiplicamos uno por uno, cuatro veces. Sumamos los cuatro resultados y obtenemos cuatro.','Con estaba, las dos primeras multiplicaciones dan uno. Las dos últimas dan cero. La suma es dos.','Ahora consigo mismo. Los signos importan: uno menos uno más uno menos uno da cero.','Ya tenemos tres compatibilidades: cuatro, dos y cero. Todavía no son porcentajes.','Cada fila repite esta operación con su propia Query. Por eso la tabla tiene tres filas y tres columnas.'][mi]:null;
+  if(si===3)text=['Ahora usamos los scores escalados: dos, uno y cero.','La exponencial convierte cada score en un número positivo. El score cero también aporta: e elevado a cero es uno.','Sumamos todas las exponenciales: este es el denominador común de la fila.','Dividir entre el total convierte cada aporte en una fracción. El primero recibe cerca de dos tercios de toda la atención.','Lo comprobamos: las tres fracciones suman uno, salvo redondeo.'][mi]||null;
+  beat(s.short,s.title,text||('Mira esta cuenta. '+line+' '+(mi===s.math.length-1?s.anchor:'Seguimos usando el resultado del paso anterior.')),s.visual,line);
+ });
+ beat(s.short,'Detengámonos un instante',s.easy+' '+s.why+' '+s.anchor,s.visual);
+});
+beat('Masking','Durante entrenamiento, la respuesta está en la frase','Si estoy en estaba y debo predecir masacotudo, leer masacotudo sería hacer trampa. En entrenamiento tenemos toda la frase en memoria. Por eso debemos tapar matemáticamente el futuro.',function(){return wordScene(false)});
+beat('Masking','Tapar significa sumar menos infinito','Fila es quien pregunta. Columna es a quien mira. Arriba de la diagonal están las posiciones futuras. Sumamos menos infinito a esos scores antes del softmax.',function(){return matrix('Máscara causal',[[0,'−∞','−∞'],[0,0,'−∞'],[0,0,0]],'masked')},'scores + M → softmax');
+beat('Masking','El futuro recibe exactamente cero','La exponencial de menos infinito es cero. La primera palabra solo puede mirarse a sí misma; la segunda mira a las dos primeras. La tercera fila queda igual porque ya no tiene un futuro a su derecha.',function(){return matrix('Pesos causales',CAUSAL,'a')},'exp(−∞) = 0');
+beat('Conclusión','Llegaste a un vector, no a una palabra nueva','Esta es la salida de un bloque para una posición. Predecir un token requiere después una proyección al vocabulario y otra distribución. Nuestro ejercicio termina en este vector contextual: no demuestra por sí solo que el modelo entiende como una persona.',stages[9].visual);
+$('#filmSeek').max=film.length-1;
+$('#filmChapters').innerHTML=film.map(function(b,i){return i===0||film[i-1].chapter!==b.chapter?'<button data-film="'+i+'">'+b.chapter+'</button>':''}).join('');
+$$('[data-film]').forEach(function(b){b.onclick=function(){seekFilm(Number(b.dataset.film))}});
+function filmCancel(){filmGeneration++;clearTimeout(filmTimer);if('speechSynthesis' in window)speechSynthesis.cancel()}
+function renderFilm(){
+ var b=film[fi];
+ $('#filmChapter').textContent=b.chapter;
+ $('#filmScene').innerHTML='<h2>'+b.title+'</h2><div class="film-visual">'+b.visual()+'</div>'+(b.equation?'<div class="film-equation">'+b.equation+'</div>':'');
+ $('#filmCaption').textContent=b.text;
+ $('#filmSeek').value=fi;$('#filmTime').textContent=(fi+1)+' / '+film.length;
+ $('#filmBack').disabled=fi===0;$('#filmNext').disabled=fi===film.length-1;
+ $('#filmPlay').textContent=playing?'⏸ Pausar':'▶ Reproducir';
+}
+function advanceFilm(){if(fi<film.length-1){fi++;renderFilm();runFilm()}else{playing=false;renderFilm()}}
+function runFilm(){
+ if(!playing)return;
+ var generation=filmGeneration,b=film[fi],speed=Number($('#filmSpeed').value),done=false;
+ function finish(){if(done||generation!==filmGeneration||!playing)return;done=true;clearTimeout(filmTimer);filmTimer=setTimeout(advanceFilm,900/speed)}
+ var estimated=Math.max(6500,b.text.split(/\s+/).length*470)/speed;
+ if(voice&&'speechSynthesis' in window){
+  var u=new SpeechSynthesisUtterance(b.text);u.lang='es-CO';u.rate=.94*speed;
+  var spanish=speechSynthesis.getVoices().filter(function(v){return v.lang.indexOf('es')===0});if(spanish.length)u.voice=spanish[0];
+  u.onend=finish;u.onerror=finish;speechSynthesis.speak(u);
+  // A browser with no usable voice must still progress through the visual class.
+  filmTimer=setTimeout(finish,estimated*2+3000);
+ }else filmTimer=setTimeout(finish,estimated);
+}
+function seekFilm(n){filmCancel();fi=Math.max(0,Math.min(film.length-1,n));renderFilm();runFilm()}
+function toggleFilm(){filmCancel();playing=!playing;if(playing&&fi===film.length-1)fi=0;renderFilm();runFilm()}
+$('#filmPlay').onclick=toggleFilm;$('#filmBack').onclick=function(){seekFilm(fi-1)};$('#filmNext').onclick=function(){seekFilm(fi+1)};
+$('#filmSeek').oninput=function(){seekFilm(Number(this.value))};$('#filmSpeed').onchange=function(){seekFilm(fi)};
+$('#filmVoice').onclick=function(){voice=!voice;this.textContent=voice?'Voz activada':'Sin voz';this.setAttribute('aria-pressed',String(voice));seekFilm(fi)};
+$('#filmFull').onclick=function(){if(document.fullscreenElement)document.exitFullscreen();else if($('#cinema').requestFullscreen)$('#cinema').requestFullscreen().catch(function(){})};
+document.addEventListener('keydown',function(e){if(/INPUT|SELECT|TEXTAREA|BUTTON/.test(e.target.tagName)||$('#presentOverlay').classList.contains('open'))return;if(e.key===' '){e.preventDefault();toggleFilm()}if(e.key==='ArrowRight'){e.preventDefault();seekFilm(fi+1)}if(e.key==='ArrowLeft'){e.preventDefault();seekFilm(fi-1)}});
+document.addEventListener('visibilitychange',function(){if(document.hidden&&playing){filmCancel();playing=false;renderFilm()}});
+renderFilm();
+
 })();
+
