@@ -1,56 +1,34 @@
-# Deep Learning Tutorial — Transformer interactivo
+# Dentro de un Transformer
 
-Micrositio visual para estudiar y exponer el flujo matemático de un Transformer desde cero.
+Clase audiovisual interactiva en español. La portada abre una película de aproximadamente 14 minutos, con 13 capítulos, un lienzo animado, narración del navegador, subtítulos y controles de vídeo.
 
-## Qué incluye
+## Ejecutar
 
-- 16 misiones desde embeddings hasta decoder y generación.
-- Ejemplo numérico continuo con `tamal → estaba → masacotudo`.
-- Producto punto celda por celda en `QKᵀ`.
-- Escalado por `√dk`, softmax y mezcla ponderada de `V`.
-- Multi-head attention, `Wᴼ`, residual, LayerNorm y FFN.
-- Máscara causal interactiva.
-- Comparación encoder-only, decoder-only y encoder–decoder.
-- Modo estudio y modo exposición 16:9.
-- Lectura por voz usando Web Speech API.
-- Checkpoints de comprensión.
-- Navegación por teclado.
+Abrir `index.html` directamente, o servir esta carpeta con `python3 -m http.server 8000`. No hay instalación, build, backend, fuentes remotas ni dependencias de ejecución. Los archivos funcionan sin conexión; algunas voces del sistema requieren red.
 
-## Controles para exponer
+## Uso
 
-- `←` / `→`: misión anterior / siguiente.
-- `F`: pantalla completa.
-- `R`: repetir la animación de la escena.
-- `Espacio`: reproducir / pausar la clase automática.
-- `P`: alternar modo oscuro y modo proyector claro.
+- Reproducir/pausar: botón o espacio.
+- Retroceder/avanzar 10 segundos: botones o flechas.
+- Pantalla completa: botón o F (según soporte del navegador).
+- Repetir capítulo: botón o R.
+- Capítulos: navegación directa por tiempo; se conserva el estado de pausa.
+- Ampliar dibujo: vista desplazable para leer matrices en móviles.
+- Voz, subtítulos y velocidad ajustables. La voz usa Web Speech API y depende del dispositivo; no es audio humano pregrabado.
+- La pestaña se pausa al pasar a segundo plano.
 
-También puedes abrir directamente el modo exposición con:
+## Recorrido
 
-`?mode=present`
+Contexto → embeddings + posición → Q/K/V → productos punto → escala y softmax → mezcla de V → máscara causal → multi-head conceptual → proyección y residual → LayerNorm → FFN → salida del bloque → generación conceptual.
 
-Y el modo claro para proyectores con:
+Los números se calculan en JavaScript a partir de matrices explícitas. El ejemplo usa X de 3×4, una cabeza, dk=4, dv=2, post-LayerNorm, epsilon=1e-5, gamma=1, beta=0, sesgos cero y ReLU. Se muestran cuatro decimales, pero no se redondean los cálculos intermedios. `Ver datos` expone todas las matrices, embeddings, posición y resultados. Pesos elegidos a mano para enseñanza, no parámetros de un modelo entrenado. La generación final y la segunda cabeza son ilustraciones separadas, claramente identificadas.
 
-`?mode=present&projector=1`
+Resultado de atención z3 = [1.4205124847, 0.5794875153]. Resultado del bloque y3 = [0.2393147429, -1.1820710380, 1.4963231363, -0.5535668413].
 
-## Ejecutar localmente
+## Archivos
 
-No requiere instalación ni dependencias.
+- `index.html`, `cinema.css`, `cinema.js`: experiencia principal.
+- `estudio.html`, `styles.css`, `app.js`: versión anterior, conservada como apuntes.
+- `vercel.json`: despliegue estático, sin build.
 
-Puedes abrir `index.html` directamente en el navegador. Para evitar restricciones del navegador con algunas funciones, también puedes servir la carpeta localmente:
-
-```bash
-python3 -m http.server 8000
-```
-
-y abrir `http://localhost:8000`.
-
-## Estructura
-
-- `index.html`: estructura de la experiencia.
-- `styles.css`: sistema visual, responsive y modo exposición.
-- `app.js`: contenido, cálculos, escenas, animaciones e interacción.
-- `vercel.json`: configuración mínima de despliegue estático.
-
-## Despliegue
-
-El proyecto es estático y puede desplegarse directamente en Vercel sin build command.
+El lienzo se vuelve a dibujar desde el tiempo de reproducción: pausar congela la animación y buscar un tiempo reconstruye la escena. Narración por segmento; el reproductor espera si la voz necesita más tiempo. Al buscar a mitad de segmento la voz repite ese segmento para no perder contexto.
