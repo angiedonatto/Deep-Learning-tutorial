@@ -1,12 +1,16 @@
 <!doctype html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f5f2e9"><title>Transformers, dibujados paso a paso</title><meta name="description" content="Una clase animada en español. Sigue cada número desde las palabras hasta la predicción del siguiente token."><link rel="stylesheet" href="film/style.css"></head>
-<body>
-<header><a href="./" class="wordmark"><span>✳</span> TRANSFORMERS <small>paso a paso</small></a><button id="chapterButton" class="button quiet" aria-expanded="false">☰ <span>El recorrido</span></button></header>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#f3ede2"><title>La biblioteca del contexto · Entender Transformers</title><meta name="description" content="Entiende los Transformers con una biblioteca ilustrada: consultas, fichas, páginas y un cuaderno que se transforma. Una historia narrada con objetos para explorar."><link rel="preload" as="image" href="assets/illustrations/library.webp"><link rel="stylesheet" href="film/style.css"><link rel="stylesheet" href="film/illustrated.css"></head>
+<body class="illustrated">
+<header><a href="./" class="wordmark"><span>✳</span> TRANSFORMERS <small>la biblioteca del contexto</small></a><a class="mode-link" href="numeros.html">Ver las cuentas ↗</a><button id="chapterButton" class="button quiet" aria-expanded="false">☰ <span>El recorrido</span></button></header>
 <main id="player">
-<div class="scene-meta"><span id="chapterTitle">UNA IDEA, DIBUJADA A LA VEZ</span><div class="key"><span class="q">● Q busca</span><span class="k">● K compara</span><span class="v">● V aporta</span></div></div>
+<div class="scene-meta"><span id="chapterTitle">UNA IDEA, DIBUJADA A LA VEZ</span><div class="key"><span>UNA IDEA QUE PUEDES IMAGINAR</span></div></div>
 <section class="stage" id="stage" aria-label="Clase animada">
-<canvas id="canvas" role="img" aria-label="Explicación visual de Transformers"></canvas>
-<div id="cover" class="cover"><div class="cover-label">UNA CLASE PARA VER, ESCUCHAR Y ENTENDER</div><h1>¿Qué pasa <em>dentro</em><br>de un Transformer?</h1><p>Sigue una palabra. Mira cómo se convierte en números,<br>cómo busca contexto y cómo llega a una predicción.</p><button id="start" class="button primary"><span>▶</span> Empezar desde cero <small id="duration"></small></button><span class="cover-note">Sin prisa. Puedes repetir cualquier cuenta.</span></div>
+<canvas id="canvas" hidden></canvas>
+<div id="visualScene" class="visual-scene" role="group" aria-label="Una biblioteca ilustrada para comprender los Transformers">
+<div class="visual-window"><div id="world" class="visual-world"><img class="art active" id="artA" src="assets/illustrations/library.webp" alt="Una lectora descubre tres libros sobre un tamal, un reloj y una textura" fetchpriority="high"><img class="art" id="artB" alt=""><div id="pins" class="object-pins"></div></div><div class="scene-shade"></div><div id="sceneName" class="scene-name" hidden></div><div id="weights" class="book-weights" hidden><span><b>66.52 %</b>tamal</span><span><b>24.47 %</b>estaba</span><span><b>9.00 %</b>masacotudo</span></div></div>
+<div id="bridge" class="concept-bridge" hidden><div class="bridge-image"><span>EN LA HISTORIA</span><strong id="objectName"></strong></div><span class="bridge-arrow">→</span><div class="bridge-model"><span>EN EL TRANSFORMER</span><strong id="conceptName"></strong></div><a id="mathLink" href="numeros.html">Ver esta idea con números ↗</a></div>
+<div id="objectNote" class="object-note" hidden><button id="closeObject" class="button quiet" aria-label="Cerrar explicación del objeto">✕</button><strong id="objectTitle"></strong><p id="objectDescription"></p></div></div>
+<div id="cover" class="cover"><div class="cover-label">UNA HISTORIA ILUSTRADA PARA ENTENDER LA ATENCIÓN</div><h1>Una palabra.<br><em>Una biblioteca</em><br>de contexto.</h1><p>Antes de las fórmulas, mira lo que ocurre.<br>Consultas, libros y un cuaderno que cambia al leer.</p><button id="start" class="button primary"><span>▶</span> Entrar a la historia <small id="duration"></small></button><span class="cover-note">Ilustraciones, narración y objetos para explorar.</span></div>
 <div id="pointerHint" class="pointer-hint" hidden>Arrastra para explorar · Doble clic para volver</div>
 <div class="ending" id="ending" hidden><button id="restart" class="button primary">↺ Volver al principio</button></div>
 </section>
@@ -17,7 +21,7 @@
 </div>
 <div class="below"><span id="status" role="status">Espacio: pausa · Flechas: retroceder / avanzar · F: pantalla completa</span><button id="dataButton" class="button quiet">Los números del ejemplo ↗</button></div>
 </main>
-<dialog id="chaptersDialog"><div class="dialog-head"><h2>El recorrido de una palabra</h2><button data-close="chaptersDialog" class="button quiet" aria-label="Cerrar recorrido">✕</button></div><p>Todo es una sola clase. Puedes volver a cualquier parte.</p><div id="chapters"></div></dialog>
+<dialog id="chaptersDialog"><div class="dialog-head"><h2>El recorrido por la biblioteca</h2><button data-close="chaptersDialog" class="button quiet" aria-label="Cerrar recorrido">✕</button></div><p>Todo es una sola clase. Puedes volver a cualquier parte.</p><div id="chapters"></div></dialog>
 <dialog id="dataDialog"><div class="dialog-head"><h2>Un cálculo de principio a fin</h2><button data-close="dataDialog" class="button quiet" aria-label="Cerrar datos">✕</button></div><p>Pesos didácticos elegidos a mano, no un modelo entrenado. Una palabra representa un token. Usamos una cabeza, dmodel = dk = 4, dv = 2, sesgos cero, ReLU y post-LayerNorm con ε = 10⁻⁵, γ = 1 y β = 0. Conservamos todos los decimales al calcular.</p><p>La proyección final usa un vocabulario de cuatro tokens y pesos explícitos para completar el mismo ejemplo hasta la predicción. No representa el comportamiento de un LLM real.</p><div id="data"></div></dialog>
-<script src="film/model.js"></script><script src="film/story.js"></script><script src="film/draw.js"></script><script src="film/player.js"></script>
+<script src="film/model.js"></script><script src="film/visual-story.js"></script><script src="film/illustrations.js"></script><script src="film/player.js"></script>
 </body></html>

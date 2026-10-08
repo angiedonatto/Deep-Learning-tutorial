@@ -35,3 +35,28 @@ Chromium real con Playwright; escritorio y móvil de 390×844.
 ## Límites que permanecen
 
 La narración usa Web Speech API: disponibilidad, pronunciación y naturalidad dependen del dispositivo. Las pruebas automatizadas no equivalen a escuchar todas las voces de iOS, Android y macOS. Las animaciones y subtítulos funcionan sin voz. La selección final pertenece a un ejemplo de pesos elegidos a mano y vocabulario pequeño, no a un modelo entrenado ni a una validación empírica de comprensión.
+
+## Revisión: una historia con imágenes
+
+La revisión del usuario mostró que mover números y diferenciar vectores por color no daba una imagen mental suficiente. La entrada principal se reconstruyó alrededor de una biblioteca ilustrada, con seis imágenes originales y 34 escenas en 8 capítulos.
+
+- Consulta escrita → Q; ficha de catálogo → K; páginas → V.
+- Atención repartida entre libros → pesos de softmax; recortes reunidos en un cuaderno → mezcla de Values.
+- Cortina sobre libros futuros → máscara causal; original conservado y nueva información → conexión residual.
+- Cada escena hace explícita su relación con la operación. Las etiquetas de objetos se pueden tocar y pausan la reproducción para explorarlos.
+- El recorrido matemático continúa en `numeros.html`. Los enlaces desde la historia abren directamente el tipo de operación correspondiente.
+- La narración identifica los límites de la analogía y el origen didáctico de los porcentajes. Ningún puntaje se calcula a partir de las ilustraciones.
+- Las seis imágenes WebP conservan la composición original y pesan aproximadamente 2 MB en conjunto. Los prompts se guardan junto a ellas.
+
+### Verificación de esta revisión
+
+Chromium real con Playwright, escritorio de 1440×1000 y móvil de 390×844:
+
+- Las seis ilustraciones cargan; inspección visual de portada, Q/K/V, atención, mezcla, máscara, taller y composición móvil.
+- Las 34 escenas muestran su objeto y concepto; todos sus destinos existen en el guion numérico.
+- El acercamiento cambia durante la reproducción. La pausa congela tanto el tiempo como la transformación de la imagen.
+- Tocar un objeto abre su explicación y pausa la clase. Un enlace desde Q abre la proyección numérica.
+- Porcentajes visibles en escritorio y móvil; fin de recorrido y reinicio funcionales.
+- Sin errores JavaScript ni desbordamiento horizontal en la vista móvil comprobada.
+
+Son ilustraciones con transiciones y acercamientos controlados por el reproductor, no un video renderizado ni animación de personajes. La voz sigue dependiendo del navegador. La revisión automatizada no certifica por sí misma el aprendizaje ni todas las combinaciones de dispositivo y voz.

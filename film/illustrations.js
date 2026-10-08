@@ -1,0 +1,17 @@
+(()=>{'use strict';
+const $=s=>document.querySelector(s),world=$('#world'),artA=$('#artA'),artB=$('#artB');
+const urls=Object.fromEntries(['library','qkv','attention','mixing','masking','workshop'].map(n=>[n,`assets/illustrations/${n}.webp`]));
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+const alts={library:'Una joven lectora observa tres libros: un tamal, un reloj y una textura de maíz.',qkv:'La lectora sostiene una consulta, examina un fichero y abre un libro ilustrado.',attention:'La lectora reparte marcadores y tiempo de lectura entre tres libros.',mixing:'Fragmentos de tres libros se reúnen en un cuaderno de collage.',masking:'Una cortina oculta los libros futuros mientras otros siguen visibles.',workshop:'La lectora conserva su cuaderno original, añade contexto y edita un cuaderno nuevo.'};
+let currentImage='library',activeArt=artA,lastId=-1,zoom=1,pan={x:0,y:0},lastArgs=null,generation=0;
+for(const url of Object.values(urls)){let img=new Image();img.src=url;img.decode?.().catch(()=>{})}
+const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>{x=clamp(x);return x*x*(3-2*x)},lerp=(a,b,t)=>a+(b-a)*t;
+function showImage(name){if(name===currentImage)return;currentImage=name;const gen=++generation,next=activeArt===artA?artB:artA;next.onload=()=>{if(gen!==generation)return;activeArt.classList.remove('active');next.classList.add('active');activeArt=next};next.onerror=()=>{if(gen===generation)$('#status').textContent='No se pudo cargar esta ilustración. Reintenta al recuperar la conexión.'};next.alt=alts[name];next.src=urls[name]}
+function draw(s,p,started){lastArgs=[s,p,started];if(!started){world.style.transform='none';return}showImage(s.image);const trans=reducedMotion.matches?1:ease(p/.75),from=s.previousView,to=s.view,scale=lerp(from.z,to.z,trans)*zoom;world.style.transformOrigin=`${lerp(from.x,to.x,trans)*100}% ${lerp(from.y,to.y,trans)*100}%`;world.style.transform=`translate(${pan.x}px,${pan.y}px) scale(${scale})`;
+if(lastId!==s.index){lastId=s.index;$('#sceneName').textContent=s.title;$('#sceneName').hidden=false;$('#bridge').hidden=false;$('#objectName').textContent=s.object;$('#conceptName').textContent=s.concept;$('#mathLink').href='numeros.html?parte='+encodeURIComponent(s.math||'sentence');$('#weights').hidden=!s.weights;$('#objectNote').hidden=true;$('#visualScene').setAttribute('aria-label',alts[s.image]+' '+s.text);$('#pins').innerHTML='';(s.pins||[]).forEach(pin=>{let b=document.createElement('button');b.className='object-pin';b.type='button';b.textContent=pin.name;b.style.left=`${pin.x*100}%`;b.style.top=`${pin.y*100}%`;b.setAttribute('aria-label',`Explorar: ${pin.name}`);b.onclick=()=>{document.dispatchEvent(new Event('film:inspect'));$('#objectTitle').textContent=pin.name;$('#objectDescription').textContent=pin.description;$('#objectNote').hidden=false};$('#pins').appendChild(b)})}}
+function resize(){const box=world.parentElement.getBoundingClientRect(),ratio=1672/940,width=Math.max(box.width,box.height*ratio),height=width/ratio;world.style.width=width+'px';world.style.height=height+'px';world.style.left=(box.width-width)/2+'px';world.style.top=(box.height-height)/2+'px';if(lastArgs)draw(...lastArgs)}
+function setZoom(on){zoom=on?1.35:1;pan={x:0,y:0};$('#visualScene').style.touchAction=on?'none':'pan-y'}
+function drag(dx,dy){pan.x=Math.max(-170,Math.min(170,pan.x+dx));pan.y=Math.max(-140,Math.min(140,pan.y+dy))}
+$('#closeObject').onclick=()=>$('#objectNote').hidden=true;
+window.FilmDrawing={resize,draw,setZoom,drag,types:['illustration']};
+})();

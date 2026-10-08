@@ -1,33 +1,40 @@
-# Transformers, dibujados paso a paso
+# La biblioteca del contexto
 
-Una clase continua en español con 104 explicaciones breves, aproximadamente 13 minutos y 9 capítulos. Una acción matemática por momento: seleccionar, multiplicar, transportar el producto y sumar.
+Una historia ilustrada en español para entender los Transformers. La entrada principal presenta 34 escenas breves, 8 capítulos y aproximadamente 8 minutos de narración. Seis ilustraciones originales dan un objeto y una acción a cada idea: consultas, fichas, páginas, atención repartida, un cuaderno que reúne información y una cortina que oculta el futuro.
 
-Abrir `index.html` directamente o servir la carpeta con `python3 -m http.server 8000`. No requiere instalación ni build. El sitio es estático y funciona sin conexión; algunas voces del navegador necesitan internet.
+Abrir `index.html` directamente o servir la carpeta con `python3 -m http.server 8000`. No requiere instalación ni build. El sitio es estático; las imágenes están incluidas. Algunas voces del navegador necesitan internet.
 
-## Recorrido
+## Dos recorridos conectados
 
-Contexto → embedding + posición → Q/K/V → productos punto → escalado → softmax → máscara causal → mezcla de V → multi-head conceptual → Wᴼ → residual → LayerNorm → FFN → residual + LayerNorm → logits → probabilidades → siguiente token.
+- `index.html`: historia ilustrada con acercamientos, transiciones y objetos que se pueden explorar. Cada escena muestra la relación «en la historia → en el Transformer».
+- `numeros.html`: ejercicio numérico completo, con 104 explicaciones, 9 capítulos y aproximadamente 13 minutos. El enlace «Ver esta idea con números» abre directamente la operación correspondiente. «Volver a la historia» regresa a la biblioteca.
 
-El ejemplo usa pesos elegidos a mano, una cabeza, dmodel=dk=4, dv=2, sesgos cero, ReLU, post-LayerNorm y epsilon=1e-5. Se mantienen decimales completos en el cálculo. `Los números del ejemplo` muestra todas las matrices. El vocabulario final es [punto, y, pero, fin], con una proyección didáctica explícita desde el mismo Y₃. No es un modelo entrenado.
+La biblioteca es una analogía, no una representación literal de cómo piensa una red. Los porcentajes mostrados provienen del ejemplo numérico; no se calculan a partir de las imágenes. Q, K y V son proyecciones de cada posición. Varias cabezas aprenden sus patrones: no tienen trabajos humanos prefijados.
 
 ## Controles
 
-- Espacio: reproducir/pausar.
-- Flechas: avanzar/retroceder 10 segundos.
-- R o flecha circular: repetir la explicación actual.
-- F: pantalla completa, según soporte del navegador.
-- Recorrido: entrar directamente a un capítulo.
-- Ampliar: activar zoom y arrastrar dentro del dibujo; doble clic restablece.
-- Voz y velocidad: ajustes del reproductor. La narración depende de Web Speech API y de las voces del dispositivo.
+- Reproducir/pausar; retroceder 10 segundos; siguiente explicación; repetir la escena.
+- Recorrido por capítulos con miniaturas de las ilustraciones.
+- Tocar las etiquetas de los libros y de Q/K/V pausa la clase y muestra su función.
+- Voz y velocidad: la narración usa Web Speech API y las voces disponibles en el dispositivo. No es audio pregrabado.
+- Ampliar y arrastrar; doble clic para volver. Pantalla completa según soporte del navegador.
+- Espacio: reproducir/pausar. Flechas: avanzar/retroceder. R: repetir. F: pantalla completa.
+- Movimiento reducido: se desactivan los acercamientos progresivos y las transiciones.
 
-## Código
+## Modelo didáctico
 
-- `film/model.js`: álgebra y valores exactos.
-- `film/story.js`: guion por acciones y tiempos.
-- `film/draw.js`: ilustraciones, movimiento y composición independiente para móvil.
-- `film/player.js`: reproducción, narración, subtítulos y controles.
-- `film/style.css`: interfaz.
-- `estudio.html`, `app.js`, `styles.css`, `cinema.js`, `cinema.css`: versiones anteriores conservadas; no se cargan en la entrada principal.
-- `AUDIT.md`: fallos identificados, correcciones y evidencia de verificación.
+El ejemplo usa pesos elegidos a mano, una cabeza, dmodel=dk=4, dv=2, sesgos cero, ReLU, post-LayerNorm y epsilon=1e-5. Se mantienen decimales completos en el cálculo. «Los números del ejemplo» muestra las matrices. El vocabulario final es [punto, y, pero, fin], con una proyección explícita desde el mismo Y₃. No es un modelo entrenado.
+
+## Código y recursos
+
+- `film/visual-story.js`: guion de la historia, objetos, relaciones y destinos numéricos.
+- `film/illustrations.js`: imágenes, acercamientos y exploración de objetos.
+- `film/illustrated.css`: composición ilustrada adaptable a móvil.
+- `assets/illustrations/`: seis imágenes generadas con OpenAI y optimizadas como WebP; los prompts originales están en `prompts.json`.
+- `film/model.js`: álgebra y valores exactos compartidos.
+- `film/story.js`, `film/draw.js`: guion y animación del ejercicio numérico.
+- `film/player.js`, `film/style.css`: reproductor y controles compartidos.
+- `estudio.html`, `app.js`, `styles.css`, `cinema.js`, `cinema.css`: versiones anteriores conservadas.
+- `AUDIT.md`: cambios y evidencia de verificación.
 
 Vercel sirve los archivos directamente, sin backend ni dependencias de ejecución.
