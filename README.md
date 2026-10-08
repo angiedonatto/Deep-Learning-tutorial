@@ -1,34 +1,33 @@
-# Dentro de un Transformer
+# Transformers, dibujados paso a paso
 
-Clase audiovisual interactiva en español. La portada abre una película de aproximadamente 14 minutos, con 13 capítulos, un lienzo animado, narración del navegador, subtítulos y controles de vídeo.
+Una clase continua en español con 104 explicaciones breves, aproximadamente 13 minutos y 9 capítulos. Una acción matemática por momento: seleccionar, multiplicar, transportar el producto y sumar.
 
-## Ejecutar
-
-Abrir `index.html` directamente, o servir esta carpeta con `python3 -m http.server 8000`. No hay instalación, build, backend, fuentes remotas ni dependencias de ejecución. Los archivos funcionan sin conexión; algunas voces del sistema requieren red.
-
-## Uso
-
-- Reproducir/pausar: botón o espacio.
-- Retroceder/avanzar 10 segundos: botones o flechas.
-- Pantalla completa: botón o F (según soporte del navegador).
-- Repetir capítulo: botón o R.
-- Capítulos: navegación directa por tiempo; se conserva el estado de pausa.
-- Ampliar dibujo: vista desplazable para leer matrices en móviles.
-- Voz, subtítulos y velocidad ajustables. La voz usa Web Speech API y depende del dispositivo; no es audio humano pregrabado.
-- La pestaña se pausa al pasar a segundo plano.
+Abrir `index.html` directamente o servir la carpeta con `python3 -m http.server 8000`. No requiere instalación ni build. El sitio es estático y funciona sin conexión; algunas voces del navegador necesitan internet.
 
 ## Recorrido
 
-Contexto → embeddings + posición → Q/K/V → productos punto → escala y softmax → mezcla de V → máscara causal → multi-head conceptual → proyección y residual → LayerNorm → FFN → salida del bloque → generación conceptual.
+Contexto → embedding + posición → Q/K/V → productos punto → escalado → softmax → máscara causal → mezcla de V → multi-head conceptual → Wᴼ → residual → LayerNorm → FFN → residual + LayerNorm → logits → probabilidades → siguiente token.
 
-Los números se calculan en JavaScript a partir de matrices explícitas. El ejemplo usa X de 3×4, una cabeza, dk=4, dv=2, post-LayerNorm, epsilon=1e-5, gamma=1, beta=0, sesgos cero y ReLU. Se muestran cuatro decimales, pero no se redondean los cálculos intermedios. `Ver datos` expone todas las matrices, embeddings, posición y resultados. Pesos elegidos a mano para enseñanza, no parámetros de un modelo entrenado. La generación final y la segunda cabeza son ilustraciones separadas, claramente identificadas.
+El ejemplo usa pesos elegidos a mano, una cabeza, dmodel=dk=4, dv=2, sesgos cero, ReLU, post-LayerNorm y epsilon=1e-5. Se mantienen decimales completos en el cálculo. `Los números del ejemplo` muestra todas las matrices. El vocabulario final es [punto, y, pero, fin], con una proyección didáctica explícita desde el mismo Y₃. No es un modelo entrenado.
 
-Resultado de atención z3 = [1.4205124847, 0.5794875153]. Resultado del bloque y3 = [0.2393147429, -1.1820710380, 1.4963231363, -0.5535668413].
+## Controles
 
-## Archivos
+- Espacio: reproducir/pausar.
+- Flechas: avanzar/retroceder 10 segundos.
+- R o flecha circular: repetir la explicación actual.
+- F: pantalla completa, según soporte del navegador.
+- Recorrido: entrar directamente a un capítulo.
+- Ampliar: activar zoom y arrastrar dentro del dibujo; doble clic restablece.
+- Voz y velocidad: ajustes del reproductor. La narración depende de Web Speech API y de las voces del dispositivo.
 
-- `index.html`, `cinema.css`, `cinema.js`: experiencia principal.
-- `estudio.html`, `styles.css`, `app.js`: versión anterior, conservada como apuntes.
-- `vercel.json`: despliegue estático, sin build.
+## Código
 
-El lienzo se vuelve a dibujar desde el tiempo de reproducción: pausar congela la animación y buscar un tiempo reconstruye la escena. Narración por segmento; el reproductor espera si la voz necesita más tiempo. Al buscar a mitad de segmento la voz repite ese segmento para no perder contexto.
+- `film/model.js`: álgebra y valores exactos.
+- `film/story.js`: guion por acciones y tiempos.
+- `film/draw.js`: ilustraciones, movimiento y composición independiente para móvil.
+- `film/player.js`: reproducción, narración, subtítulos y controles.
+- `film/style.css`: interfaz.
+- `estudio.html`, `app.js`, `styles.css`, `cinema.js`, `cinema.css`: versiones anteriores conservadas; no se cargan en la entrada principal.
+- `AUDIT.md`: fallos identificados, correcciones y evidencia de verificación.
+
+Vercel sirve los archivos directamente, sin backend ni dependencias de ejecución.
